@@ -43,11 +43,15 @@
 \newcommand{\M}{\mathcal{M}}
 \newcommand{\W}{\mathcal{W}}
 
-\newcommand{\bFunc}{\mathbb{B}}
+\newcommand{\bB}{\mathbb{B}}
+\newcommand{\bF}{\mathbb{F}}
+\newcommand{\bS}{\mathbb{S}}
 \newcommand{\itilde}{\tilde{\imath}}
 \newcommand{\jtilde}{\tilde{\jmath}}
 \newcommand{\ihat}{\hat{\imath}}
 \newcommand{\jhat}{\hat{\jmath}}
+\newcommand{\data}{\mathbb{D}}
+\newcommand{\down}[1]{#1\downarrow}
 
 \renewcommand{\emptyset}{\varnothing}
 
@@ -72,7 +76,7 @@
 
 \begin{document}
 
-\title{Behavior types of several JVM instructs}
+\title{Behavior types of several JVM instructions}
 %\author{}
 
 %%% In the address, show linebreaks with double backslashes:
@@ -81,7 +85,6 @@
 %%% To have the current date inserted, use \date{\today}:
 %\date{\filedate, \fileversion}
 
-\maketitle
 
 %%% To include a table of contents, uncomment the following line:
 %\tableofcontents
@@ -89,36 +92,105 @@
 \begin{abstract}
 We consider an abstraction of the program $P$ globally defined from 1 to a certain $n$. No checks on the domain of $P$ are made because the bytecode is only valid if all execution path end with a return statement, and in that case the analysis do not consider exceding lines of code.
 
-The JVM state is abstracted with a memory $F$ initially filled with the parameters of the method or program, and a stack frame $S$ initially empty. In case a jump is detected, the equivalence between states are defined as the equivalence between the type of each memory slot or stack address. On the stack $S$ are defined the operations $pop(S): S \mapsto S$, $top(S) \mapsto Int \cup VM \cup \dots$, $push(x, S) \mapsto S$ with the trivial semanthics. The VM states are updated in the environment $\Gamma$.
+The datatypes we consider are $Int = \N{} \cup \{-\}$ for integer values, which can be undefined or constants $c \in \N{}$, and $VM$ as a set of names for virtual machines. $\Gamma$ is a map $VM \mapsto \sigma = \{\delta, \top, \bot, a, \down{a}\}$ which holds information about the state of each virtual machine. A general datatype $\data{} = Int \cup VM \cup \dots$ is defined to compactly integrate all datatypes stored in the stack and the memory.
 
-The behavioural type is given by the function $\bFunc{}_x:F \times S \mapsto \mathbb{B}$ where $\bFunc{}_i(F, S)$ types the program from the instruction $i$ fo the end of the program. This way jumps are easily typed and branches are created in a natural way.
+The other abstractions we consider are an abstraction of the memory $F \in \bF{}$ seen as a map $N \mapsto \data{}$ and a stack $S \in \bS{} = \emptyset \cup (\data{} \times \bS{})$. 
+The JVM state is abstracted with a memory $F$ initially filled with the parameters of the method or program, and a stack frame $S$ initially empty. On the stack $S$ are defined the operations with the trivial semanthics, given the convention that $a\cdot b = \{a, b\} $:
+\[
+top(S): \bS{} \mapsto \data{}.top(S) = x \text{ if } S = x \cdot S' \in \bS{}
+\]\[pop(S): \bS{} \mapsto \bS{}.pop(S) = S' \text{ if } S = x \cdot S' \in \bS{}
+\]\[push(x, S): \data{} \times \bS{} \mapsto \bS{}.push(x, S) = x \cdot S
+\]
+being \emph{top} and \emph{pop} both intentionally partial functions, i.e. not being defined on empty stacks.\\
+
+The behavioural type is given by the function $\bB{}_x:\bF{} \times \bS{} \mapsto \mathbb{B}$ where $\bB{}_i(F, S)$ types the program from the instruction $i$ fo the end of the program considering a memory $F$ and a stack $S$. This way jumps are easily typed and branches are created in a natural way.
 
 Open problems:
 \begin{itemize}
-\item when the analysis is performed without actual parameters or with non-specified parameters (eg. expressions which are not in Presburger Arithmetics), backward jumps (may) result in an infinite cycle of branching conditions. A way to manage these conditions should be found. An hypotesis may be to type backward jumps with a slightly different function $\overline{\bFunc{}}$ that is not typed by the system of $\bFunc{}$;\\
-\textbf{Solution:} this was no problem from the start. The theorem verifier will take care of recursion, if the recursion is correctly presented (i.e. backwards invocation of $\bFunc{}$ are recursively analysed until a fixed point is reached). Support for least upper bound must be provided for stack, memory and environment.
+\item when the analysis is performed without actual parameters or with non-specified parameters (eg. expressions which are not in Presburger Arithmetics), backward jumps (may) result in an infinite cycle of branching conditions. A way to manage these conditions should be found. An hypotesis may be to type backward jumps with a slightly different function $\overline{\bB{}}$ that is not typed by the system of $\bB{}$;\\
+\textbf{Solution:} this was no problem from the start. The theorem verifier will take care of recursion, if the recursion is correctly presented (i.e. backwards invocation of $\bB{}$ are recursively analysed until a fixed point is reached). Support for greatest lower bound must be provided for stack, memory and environment.
 \item even if computation from created VM is considered not to affect the VM environment, one can still have multiple machines or threads running the same code. While a machine may not know of the VMs created by another one, different threads may access the same global variables, therefore creating race conditions on the access of these variables. In the current version the program is supposed to be non-concurrent, but in the future a way to detect synchronized areas should be considered.\\
 \end{itemize}
 
-These rules must be fixed: whenever a backward jump is performed ($\bFunc{}_i = \bFunc{}_j, j < i$), the parameters of $\bFunc{}$ must be replaced with the least upper bound between the parameters at index $i$ and the parameters at index $j$, where in general $i < j \implies lub(P_i, P_j) = P_i$. To accomplish this behavior, we must keep track of the state of VMs, stack and memory in each step $\bFunc{}$. When not specified, $\Gamma_{i+1}$ is supposed to hold the same state as $\Gamma_i$, such as in:\\ $\Gamma_i \vdash \bFunc{}_i(F_i, S_i) = \bFunc{}_{i+1}(F_{i+1}, S_{i+1}) \rhd \Gamma_{i+1} = \Gamma_i$. In the same way, when not specified, the subscript of $\Gamma$ matches the subscript of the typed function $\bFunc{}_i$, such as in:\\
-$\Gamma \vdash \bFunc{}_i = \Gamma_i \vdash \bFunc{}_i$.
+These rules must be fixed: whenever a backward jump is performed ($\bB{}_i = \bB{}_j, j < i$), the parameters of $\bB{}$ must be replaced with the greatest lower bound between the parameters at index $i$ and the parameters at index $j$. To accomplish this behavior, we must keep track of the state of VMs, stack and memory in each step $\bB{}$. When not specified, $\Gamma_{i+1}$ is supposed to hold the same state as $\Gamma_i$ ($\Gamma_i \vdash \bB{}_i(F_i, S_i) = \bB{}_{i+1}(F_{i+1}, S_{i+1}) \rhd \Gamma_{i+1} = \Gamma_i$). In the same way, when not specified, the subscript of $\Gamma$ matches the subscript of the typed function $\bB{}_i$ ($\Gamma \vdash \bB{}_i = \Gamma_i \vdash \bB{}_i$).
 
-For the jumps, a function $\cap$ is given to compute the least upper bound for stack, environment and memory.
- 
 \end{abstract}
+\maketitle
 
 \newpage
 
+\section{The Greatest Lower Bound Function}
+
+Every symbol used in the stack, memory or environment is involved in a partial ordering relationship with the other symbols of its type. The Greatest Lower Bound of two symbols, when defined, computes the greatest of the symbols lower or equal to them. The function is \emph{not} commutative: when the arguments differ, it usually gives priority to the first one.
+
+\subsection{$\sqcup$ on datatypes}
+On integers:
+\[
+\sqcup: Int \times Int \mapsto Int: a \sqcup b =
+\begin{cases}
+- & a = - \vee b = -\\
+n & a = b = n\\
+a & a \neq b
+
+\end{cases}
+\]
+
+On virtual machines:
+\[
+\sqcup: VM \times VM \mapsto VM: \alpha \sqcup \beta = \alpha\]
+
+On virtual machine states:
+\[
+\sqcup: \sigma \times \sigma \mapsto \sigma: \alpha \sqcup \beta =
+\begin{cases}
+\alpha & \alpha = \beta\\
+\delta & (\alpha = \top \wedge \beta = \bot) \vee (\alpha = \bot \wedge \beta = \top) \vee (\alpha = \delta \vee \beta = \delta)\\
+\down{a} & (\alpha = a \wedge \beta = \bot) \vee (\alpha = \bot \wedge \beta = a) \vee (\alpha = \down{a} \vee \beta = \down{a})
+\end{cases}
+\]
+
+\subsection{$\sqcup$ on the memory}
+We define a function $D: \bF{} \mapsto \wp(\N{})$:\\
+\[D(F) = d.\forall i \in \N{}: \bF{}(i) \in \data{} \implies i \in d\]
+that computes the domain of the memory instance.
+
+\[
+\sqcup: \bF{} \times \bF{} \mapsto \bF{}. F_1 \sqcup F_2 = \overline{F}. D(\overline{F}) = D(F_1) \wedge \forall i \in D(\overline{F}): \overline{F}(i) = F_1(i) \sqcup F_2(i)
+\]
+
+\subsection{$\sqcup$ on the stack}
+\[
+\sqcup: \bS{} \times \bS{} \mapsto \bS{}. S_1 \sqcup S_2 =
+\begin{cases}
+\emptyset & S_1 = S_2 = \emptyset\\
+push(top(S_1) \sqcup top(S_2), pop(S_1) \sqcup pop(S_2)) & else
+\end{cases}
+\]
+
+Notice that, being \emph{top} and \emph{pop} both partial functions, the function defined on the stack is not total: if there are some $S_1, S_2 \text{ such that } \nexists S_1 \sqcup S_2$, the stack lengths are different and the program cannot be correctly analysed due to stack overflow errors.
+
+\subsection{$\sqcup$ on the environment}
+We define a function $D: \Gamma \mapsto \wp(VM)$:\\
+\[D(\Gamma) = d.\forall \alpha \in VM: \Gamma(\alpha) \in \sigma \implies \alpha \in d\]
+that computes the domain of the environment.
+
+\[
+\sqcup: \Gamma \times \Gamma \mapsto \Gamma. \Gamma_1 \sqcup \Gamma_2 = \overline{\Gamma}. D(\overline{\Gamma}) = D(\Gamma_1) \wedge \forall \alpha \in D(\overline{\Gamma}): \overline{\Gamma}(\alpha) = \Gamma_1(\alpha) \sqcup \Gamma_2(\alpha)
+\]
+
+
+\newpage
+\section{Typing rules}
 (T-Program)
 \begin{equation*}
 \frac{}
-{F,\emptyset, \Gamma \vdash P: \bFunc{}_1(F, \emptyset)}
+{F,\emptyset, \Gamma \vdash P: \bB{}_1(F, \emptyset)}
 \end{equation*}
 \\
 (T-Return)
 \begin{equation*}
 \frac{P[i] = \text{\texttt{return}}}
-{\Gamma \vdash \bFunc{}_i(F_i, S_i) = \emptyset}
+{\Gamma \vdash \bB{}_i(F_i, S_i) = \emptyset}
 \end{equation*}
 \\
 (T-If-Useless)
@@ -127,23 +199,42 @@ For the jumps, a function $\cap$ is given to compute the least upper bound for s
 P[i] = \text{\texttt{if} $[\text{\textit{cond}}]$ $L$ }, L = i+1,\\
 S_{i+1} = \text{pop}(S_i), F_{i+1} = F_i
 \end{aligned}}
-{\Gamma \vdash \bFunc{}_i(F_i, S_i) = \bFunc{}_{i+1}(F_{i+1}, S_{i+1})}
+{\Gamma \vdash \bB{}_i(F_i, S_i) = \bB{}_{i+1}(F_{i+1}, S_{i+1})}
 \end{equation*}
 \\
 (T-If)
 \begin{equation*}\frac{\begin{aligned}
-P[i] = \text{\texttt{if} $[\text{\textit{cond}}]$ $L$ }, L \neq 1\\
+P[i] = \text{\texttt{if} $[\text{\textit{cond}}]$ $L$ }, L \neq i+1\\
 S_{i+1} = \text{pop}(S_i), F_{i+1} = F_i,\\
-S'_{L} = \text{pop}(S_i) \cap S_L, F'_{L} = F_i \cap F_L
+L < i \implies S'_{L} = S_L \sqcup \text{pop}(S_i) \wedge F'_{L} = F_L \sqcup F_i\\
+L > i \implies S'_{L} =  \text{pop}(S_i) \sqcup S_L \wedge F'_{L} = F_i \sqcup F_L
 \end{aligned}}
-{\Gamma_i \vdash \bFunc{}_i(F_i, S_i) = [\text{\textit{cond}}] (\bFunc{}_{L}(F'_{L}, S'_{L})) +
- [\neg \text{\textit{cond}}] (\bFunc{}_{i+1}(F_{i+1}, S_{i+1})) \rhd \Gamma_i \cap \Gamma_L }
+{\Gamma_i \vdash \bB{}_i(F_i, S_i) = [\text{\textit{cond}}] (\bB{}_{L}(F'_{L}, S'_{L})) +
+ [\neg \text{\textit{cond}}] (\bB{}_{i+1}(F_{i+1}, S_{i+1})) \rhd \Gamma_i \sqcup \Gamma_L }
 \end{equation*}
 \\
-(T-Goto)
+(T-If-Undefined)
+\begin{equation*}\frac{\begin{aligned}
+P[i] = \text{\texttt{if} $[\text{\textit{cond}}]$ $L$ }, L \neq i+1, top(S_i) \notin \N{}\\
+S_{i+1} = \text{pop}(S_i), F_{i+1} = F_i,\\
+L < i \implies S'_{L} = S_L \sqcup \text{pop}(S_i) \wedge F'_{L} = F_L \sqcup F_i\\
+L > i \implies S'_{L} =  \text{pop}(S_i) \sqcup S_L \wedge F'_{L} = F_i \sqcup F_L
+\end{aligned}}
+{\Gamma_i \vdash \bB{}_i(F_i, S_i) = \bB{}_{L}(F'_{L}, S'_{L}) + \bB{}_{i+1}(F_{i+1}, S_{i+1}) \rhd \Gamma_i \sqcup \Gamma_L }
+\end{equation*}
+\\
+(T-Goto-Forward)
 \begin{equation*}
-\frac{P[i] = \text{\texttt{goto} $L$}, S'_L = S_i \cap S_L, F'_L = F_i \cap F_L}
-{\Gamma_i \vdash \bFunc{}_i(F_i, S_i) = \bFunc{}_{L}(F'_L, S'_L) \rhd \Gamma_i \cap \Gamma_L}
+\frac{\begin{aligned}P[i] = \text{\texttt{goto} $L$}, L > i, S'_{L} =  S_i \sqcup S_L, F'_L = F_i \sqcup F_L
+\end{aligned}}
+{\Gamma_i \vdash \bB{}_i(F_i, S_i) = \bB{}_{L}(F'_L, S'_L) \rhd \Gamma_i \sqcup \Gamma_L}
+\end{equation*}
+\\
+(T-Goto-Backward)
+\begin{equation*}
+\frac{\begin{aligned}P[i] = \text{\texttt{goto} $L$}, L < i, S'_{L} =  S_L \sqcup S_i, F'_L = F_L \sqcup F_i
+\end{aligned}}
+{\Gamma_i \vdash \bB{}_i(F_i, S_i) = \bB{}_{L}(F'_L, S'_L) \rhd \Gamma_L \sqcup \Gamma_i}
 \end{equation*}
 \\
 (T-New-VM)
@@ -151,7 +242,7 @@ S'_{L} = \text{pop}(S_i) \cap S_L, F'_{L} = F_i \cap F_L
 P[i] = \text{\texttt{invokevirtual CreateVM} }, \beta \text{ fresh},\\
 S_{i+1} = \text{push}(\beta,S_i), F_{i+1} = F_i, \Gamma_{i+1} = \Gamma_i[\beta \mapsto \top]
 \end{aligned}}
-{\Gamma_i \vdash \bFunc{}_i(F_i, S_i) = \nu \beta \fatsemi \bFunc{}_{i+1}(F_{i+1}, S_{i+1}) \rhd \Gamma_{i+1}}
+{\Gamma_i \vdash \bB{}_i(F_i, S_i) = \nu \beta \fatsemi \bB{}_{i+1}(F_{i+1}, S_{i+1}) \rhd \Gamma_{i+1}}
 \end{equation*}
 \\
 (T-Release-VM)
@@ -160,7 +251,7 @@ S_{i+1} = \text{push}(\beta,S_i), F_{i+1} = F_i, \Gamma_{i+1} = \Gamma_i[\beta \
 \Gamma_i(\beta) \neq \bot, \Gamma_{i+1} = \Gamma_i[\beta \mapsto \bot],
 S_{i+1} = \text{pop}(S_i), F_{i+1} = F_i
 \end{aligned}}
-{\Gamma_i \vdash \bFunc{}_i(F_i, S_i) = \beta^{\checkmark} \fatsemi \bFunc{}_{i+1}(F_{i+1}, S_{i+1}) \rhd \Gamma_{i+1}}
+{\Gamma_i \vdash \bB{}_i(F_i, S_i) = \beta^{\checkmark} \fatsemi \bB{}_{i+1}(F_{i+1}, S_{i+1}) \rhd \Gamma_{i+1}}
 \end{equation*}
 \\
 (T-Release-VM-Null)
@@ -168,26 +259,26 @@ S_{i+1} = \text{pop}(S_i), F_{i+1} = F_i
 \frac{\begin{aligned}P[i] = \text{\texttt{invokevirtual ReleaseVM} },\\
 \beta = \text{top}(S_i), \Gamma_i(\beta) = \bot, S_{i+1} = \text{pop}(S_i), F_{i+1} = F_i
 \end{aligned}}
-{\Gamma_i \vdash \bFunc{}_i(F_i, S_i) = \bFunc{}_{i+1}(F_{i+1}, S_{i+1})}
+{\Gamma_i \vdash \bB{}_i(F_i, S_i) = \bB{}_{i+1}(F_{i+1}, S_{i+1})}
 \end{equation*}
 \\
 (T-Load)
 \begin{equation*}
 \frac{P[i] = \text{\texttt{load }} n, S_{i+1} = \text{push}(F(n), S_i), F_{i+1} = F_i}
-{\Gamma \vdash \bFunc{}_i(F_i, S_i) = \bFunc{}_{i+1}(F_{i+1}, S_{i+1})}
+{\Gamma \vdash \bB{}_i(F_i, S_i) = \bB{}_{i+1}(F_{i+1}, S_{i+1})}
 \end{equation*}
 \\
 (T-Store)
 \begin{equation*}
 \frac{P[i] = \text{\texttt{store} } n, S_{i+1} = \text{pop}(S_i), F_{i+1} = F_i[n \mapsto \text{top}(S_i)]}
-{\Gamma \vdash \bFunc{}_i(F_i, S_i) = \bFunc{}_{i+1}(F_{i+1}, S_{i+1})}
+{\Gamma \vdash \bB{}_i(F_i, S_i) = \bB{}_{i+1}(F_{i+1}, S_{i+1})}
 \end{equation*}
 \\
 (T-Integer-Increment)
 \begin{equation*}
 \frac{P[i] = \text{\texttt{iinc} } idx~n, S_{i+1} = S_i,
 F_{i+1} = F_i[idx \mapsto (F_i(idx) + n)]}
-{\Gamma \vdash \bFunc{}_i(F_i, S_i) = \bFunc{}_{i+1}(F_{i+1},S_{i+1})}
+{\Gamma \vdash \bB{}_i(F_i, S_i) = \bB{}_{i+1}(F_{i+1},S_{i+1})}
 \end{equation*}
 
 \end{document}
