@@ -1,0 +1,47 @@
+We consider that:\\
+\[\forall i \in \N{}: (\exists P[i] \implies \exists \Sigma_i = \langle \bB{i}, F_i, S_i, R_i\rangle \in (\bF{} \times \bS{} \mapsto \bB{}) \times \bF{} \times \bS{} \times \wp(VM))\]\\
+where:
+\begin{itemize}
+\item $\bB{i}$ is the behavioural type function specific for the instruction $P[i]$;
+\item $F_i$ is the memory on which $\bB{i}$ is defined;
+\item $S_i$ is the stack on which $\bB{i}$ is defined;
+\item $R_i$ is the set of VM released with instruction $P[i]$ (usually zero or one).
+\end{itemize}
+
+
+\subsection{Fixed point of $\Sigma$}
+
+Each time the instruction $P[i]$ is typed, usually a $\Gamma_{j} \text{ and a }\Sigma_i$ are produced such that:
+\[\Gamma_i \vdash \bB{i}(F_i, S_i) = b \in \bB{} \rhd \Gamma_{j}, \Sigma_i = \langle \bB{i}, F_i, S_i, R_i \rangle\]
+
+where $\Gamma_{j}$ is the environment in which $\bB{j}$ will be evaluated and $\Sigma_i$ keeps information on the behavioural type $\bB{i}$. The main exceptions are the return statement, which produces no $\Gamma_j$, and the branching instructions, which produce more than a $\bB{j}$. When $\Sigma_i$ is reached from more than one path, we compute the new $\Sigma_i$ as the greatest lower bound between the freshly computed $\Sigma_i' \text{ and the old }\Sigma_i$ in the following way:
+\[\langle \bB{i}, F_i, S_i, R_i \rangle \sqcup \langle \bB{i}', F_i', S_i', R_i' \rangle = \langle \overline{\bB{i}}, \overline{F_i}, \overline{S_i}, \overline{R_i} \rangle\]
+where:
+\begin{itemize}
+\item $\overline{F_i} = F_i \sqcup F_i'$;
+\item $\overline{S_i} = S_i \sqcup S_i'$;
+\item $\overline{\bB{i}}$ is the same function as $\bB{i} \text{ and } \bB{i}'$, defined on $\overline{F_i} \text{ and }\overline{S_i}$;
+\item $\overline{R_i} = R_i \sqcup R_i'$.
+\end{itemize}
+Notice that $\overline{\Sigma_i} = \Sigma_i \sqcup \Sigma_i' \implies \overline{\Sigma_i} \leqs \Sigma_i \wedge \overline{\Sigma_i} \leqs \Sigma_i'$, given the relations:\\
+\[\langle \bB{i}, F_i, S_i, R_i \rangle \leqs \langle \bB{i}', F_i', S_i', R_i' \rangle \iff (F_i \leqs F_i' \wedge S_i \leqs S_i')\]
+\[\langle \bB{i}, F_i, S_i, R_i \rangle \less \langle \bB{i}', F_i', S_i', R_i' \rangle \iff (F_i \leqs F_i' \wedge S_i \leqs S_i') \wedge (F_i \less F_i' \vee S_i \less S_i')\]
+\[\langle \bB{i}, F_i, S_i, R_i \rangle \eqs \langle \bB{i}', F_i', S_i', R_i' \rangle \iff (F_i \eqs F_i' \wedge S_i \eqs S_i')\]\\
+When $\Sigma_i$ is updated with a new quadruple $\Sigma_i'$ such that $\Sigma_i' \less{} \Sigma_i$, all the consequent $\Sigma_j$ ``reachable'' from $\Sigma_i$ must be recomputed keeping track of the new undefined values, until for all jumps and transitions we have that $\Sigma_i' \eqs \Sigma_i$, in which case we have reached a fixed point for $\Sigma_i$.
+
+
+%______________________________________________________
+
+Furthermore, an equivalence function can be defined on $\Int{} \text{ and } VM$:
+
+And to complete the relationship family:
+\[\leqs{} \subset \data{} \times \data{}: a \leqs{} b \iff a \less{} b \vee a \eqs{} b\]
+
+
+
+\[\leqs{} \subset \bF{} \times \bF{}: F_1 \leqs F_2 \iff (D(F_1) = D(F_2) \wedge \forall i \in D(F_1): F_1(i) \leqs F_2(i))\]
+\[\leqs \subset \bS{} \times \bS{}: S_1 \leqs S_2 \iff (top(S_1) \leqs top(S_2) \wedge (pop(S_1) \leqs pop(S_2))\]
+\[\eqs{} \subset \bF{} \times \bF{}: F_1 \eqs F_2 \iff (D(F_1) = D(F_2) \wedge \forall i \in D(F_1): F_1(i) \eqs F_2(i))\]
+\[\eqs \subset \bS{} \times \bS{}: S_1 \eqs S_2 \iff (top(S_1) \eqs top(S_2) \wedge (pop(S_1) \eqs pop(S_2)))\]\\
+
+
