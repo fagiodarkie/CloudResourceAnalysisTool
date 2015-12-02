@@ -1,0 +1,77 @@
+Classfile /home/phagio/Desktop/ASP/OtherJavaTests/Test1.class
+  Last modified Nov 28, 2015; size 402 bytes
+  MD5 checksum 614b0b9474028729e4e94d6912fb200f
+  Compiled from "Test2.java"
+class Test1
+  SourceFile: "Test2.java"
+  minor version: 0
+  major version: 51
+  flags: ACC_SUPER
+Constant pool:
+   #1 = Methodref          #6.#17         //  java/lang/Object."<init>":()V
+   #2 = String             #18            //  
+   #3 = Class              #19            //  java/lang/String
+   #4 = Methodref          #3.#20         //  java/lang/String."<init>":(Ljava/lang/String;)V
+   #5 = Class              #21            //  Test1
+   #6 = Class              #22            //  java/lang/Object
+   #7 = Utf8               <init>
+   #8 = Utf8               ()V
+   #9 = Utf8               Code
+  #10 = Utf8               LineNumberTable
+  #11 = Utf8               main
+  #12 = Utf8               ([Ljava/lang/String;)V
+  #13 = Utf8               StackMapTable
+  #14 = Class              #19            //  java/lang/String
+  #15 = Utf8               SourceFile
+  #16 = Utf8               Test2.java
+  #17 = NameAndType        #7:#8          //  "<init>":()V
+  #18 = Utf8               
+  #19 = Utf8               java/lang/String
+  #20 = NameAndType        #7:#23         //  "<init>":(Ljava/lang/String;)V
+  #21 = Utf8               Test1
+  #22 = Utf8               java/lang/Object
+  #23 = Utf8               (Ljava/lang/String;)V
+{
+  Test1();
+    flags: 
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0       
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return        
+      LineNumberTable:
+        line 1: 0
+
+  public void main(java.lang.String[]);
+    flags: ACC_PUBLIC
+    Code:
+      stack=3, locals=5, args_size=2
+         0: iconst_3      
+         1: istore_2      
+         2: ldc           #2                  // String 
+         4: astore_3      
+         5: iload_2       
+         6: ifeq          26
+         9: new           #3                  // class java/lang/String
+        12: dup           
+        13: ldc           #2                  // String 
+        15: invokespecial #4                  // Method java/lang/String."<init>":(Ljava/lang/String;)V
+        18: astore        4
+        20: iinc          2, -1
+        23: goto          5
+        26: return        
+      LineNumberTable:
+        line 5: 0
+        line 6: 2
+        line 7: 5
+        line 9: 9
+        line 10: 20
+        line 12: 23
+        line 14: 26
+      StackMapTable: number_of_entries = 2
+           frame_type = 253 /* append */
+             offset_delta = 5
+        locals = [ int, class java/lang/String ]
+           frame_type = 20 /* same */
+
+}
