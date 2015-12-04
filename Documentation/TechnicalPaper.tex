@@ -49,6 +49,7 @@
 \newcommand{\eqs}{=_\Sigma}
 \newcommand{\less}{<_\Sigma}
 \newcommand{\leqs}{\leq_\Sigma}
+\newcommand{\Const}{\texttt{Const}}
 
 \renewcommand{\emptyset}{\varnothing}
 
@@ -108,7 +109,8 @@ We consider an abstraction of the bytecode program $P$ with $n$ instructions as 
 The other abstractions we consider are:
 \begin{itemize}
 \item a memory $F \in \bF{}$ seen as a map $N \mapsto \data{}$;
-\item a stack $S \in \bS{} = \emptyset \cup (\data{} \times \bS{})$. 
+\item a stack $S \in \bS{} = \emptyset \cup (\data{} \times \bS{})$;
+\item a constant table $\Const{} \text{ where } \Const{}(i)$ denotes the constant $\#i$ of the bytecode unit.
 \end{itemize}
 The JVM state is abstracted with a memory $F$ initially filled with the parameters of the method or program, and a stack frame $S$ initially empty. On the stack $S$ are defined the operations with the trivial semanthics, given the convention that $a\cdot b = \{a, b\} $:
 \[
@@ -254,19 +256,19 @@ The analysis will then create, at the end of the last iteration, a set of $\bB{i
 (T-New-VM)
 \begin{equation*}\frac{
 P[i] = \text{\texttt{invokevirtual createVM} }, \beta \text{ fresh}}
-{\Gamma \vdash \bB{i}(F_i, S_i) = \nu \beta \fatsemi \bB{i+1}(F_i, \text{push}(\beta,S_i)) \rhd \Gamma[\beta \mapsto \top]}
+{\Gamma \vdash \bB{i}(F_i, S_i) = \nu \beta \fatsemi \bB{i+1}(F_i, \text{push}(\beta,\text{pop}(S_i))) \rhd \Gamma[\beta \mapsto \top]}
 \end{equation*}
 \\
 (T-Release-VM)
 \begin{equation*}
 \frac{P[i] = \text{\texttt{invokevirtual releaseVM} }, \beta = \text{top}(S_i), \Gamma(\beta) \neq \bot}
-{\Gamma \vdash \bB{i}(F_i, S_i) = \beta^{\checkmark} \fatsemi \bB{i+1}(F_i, \text{pop}(S_i)) \rhd \Gamma[\beta \mapsto \bot]}
+{\Gamma \vdash \bB{i}(F_i, S_i) = \beta^{\checkmark} \fatsemi \bB{i+1}(F_i, \text{pop(pop}(S_i))) \rhd \Gamma[\beta \mapsto \bot], \{\beta\}}
 \end{equation*}
 \\
 (T-Release-VM-Null)
 \begin{equation*}
 \frac{P[i] = \text{\texttt{invokevirtual releaseVM} }, \beta = \text{top}(S_i), \Gamma(\beta) = \bot}
-{\Gamma \vdash \bB{i}(F_i, S_i) = \bB{i+1}(F_i, \text{pop}(S_i))}
+{\Gamma \vdash \bB{i}(F_i, S_i) = \bB{i+1}(F_i, \text{pop(pop}(S_i)))}
 \end{equation*}
 \\
 (T-Load)
@@ -284,7 +286,31 @@ P[i] = \text{\texttt{invokevirtual createVM} }, \beta \text{ fresh}}
 (T-Integer-Increment-Defined)
 \begin{equation*}
 \frac{P[i] = \text{\texttt{iinc} } idx~n, F_i(idx) \neq -}
-{\Gamma \vdash \bB{i}(F_i, S_i) = \bB{i+1}(F_i[idx \mapsto (F_i(idx) + n)],S_i)}
+{\Gamma \vdash \bB{i}(F_i, S_i) = \bB{i+1}(F_i[idx \mapsto (F_i(idx) + n)], S_i)}
+\end{equation*}
+\\
+(T-Integer-Increment-Undefined)
+\begin{equation*}
+\frac{P[i] = \text{\texttt{iinc} } idx~n, F_i(idx) = -}
+{\Gamma \vdash \bB{i}(F_i, S_i) = \bB{i+1}(F_i, S_i)}
+\end{equation*}
+\\
+(T-Iconst)
+\begin{equation*}
+\frac{P[i] = \text{\texttt{iconst\_}}n}
+{\Gamma \vdash \bB{i}(F_i, S_i) = \bB{i+1}(F_i, \text{push}(n, S_i))}
+\end{equation*}
+\\
+(T-LDC)
+\begin{equation*}
+\frac{P[i] = \text{\texttt{ldc} } x, \Const{}(x) \in \C{}}
+{\Gamma \vdash \bB{i}(F_i, S_i) = \bB{i+1}(F_i, \text{push}(n, S_i))}
+\end{equation*}
+\\
+(T-LDC-Undefined)
+\begin{equation*}
+\frac{P[i] = \text{\texttt{ldc} } x, \Const{}(x) = -}
+{\Gamma \vdash \bB{i}(F_i, S_i) = \bB{i+1}(F_i, \text{push}(-, S_i))}
 \end{equation*}
 
 \texttt{More on the way...}
