@@ -1,0 +1,26 @@
+Classfile /home/phagio/git/CloudResourceAnalysisTool/src/tests/sources/TestVMThread$1.class
+  Last modified Dec 11, 2015; size 215 bytes
+  MD5 checksum 366e7ffa9fbeb0768b90db8cd4459ca7
+  Compiled from "TestVMThread.java"
+class tests.sources.TestVMThread$1
+  SourceFile: "TestVMThread.java"
+  EnclosingMethod: #6.#0                  // tests.sources.TestVMThread
+  InnerClasses:
+       static #1 of #6; //class tests/sources/TestVMThread$1 of class tests/sources/TestVMThread
+  minor version: 0
+  major version: 51
+  flags: ACC_SUPER, ACC_SYNTHETIC
+Constant pool:
+   #1 = Class              #7             //  tests/sources/TestVMThread$1
+   #2 = Class              #10            //  java/lang/Object
+   #3 = Utf8               SourceFile
+   #4 = Utf8               TestVMThread.java
+   #5 = Utf8               EnclosingMethod
+   #6 = Class              #11            //  tests/sources/TestVMThread
+   #7 = Utf8               tests/sources/TestVMThread$1
+   #8 = Utf8               
+   #9 = Utf8               InnerClasses
+  #10 = Utf8               java/lang/Object
+  #11 = Utf8               tests/sources/TestVMThread
+{
+}

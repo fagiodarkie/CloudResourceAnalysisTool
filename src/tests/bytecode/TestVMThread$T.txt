@@ -1,0 +1,133 @@
+Classfile /home/phagio/git/CloudResourceAnalysisTool/src/tests/sources/TestVMThread$T.class
+  Last modified Dec 11, 2015; size 885 bytes
+  MD5 checksum 55009c420d63fb0cc545ca5f29459bb3
+  Compiled from "TestVMThread.java"
+class tests.sources.TestVMThread$T extends java.lang.Thread
+  SourceFile: "TestVMThread.java"
+  minor version: 0
+  major version: 51
+  flags: ACC_SUPER
+Constant pool:
+   #1 = Fieldref           #6.#28         //  tests/sources/TestVMThread$T.this$0:Ltests/sources/TestVMThread;
+   #2 = Methodref          #7.#29         //  java/lang/Thread."<init>":()V
+   #3 = Fieldref           #6.#30         //  tests/sources/TestVMThread$T.alpha:Ltests/sources/TestVMThread$VM;
+   #4 = Methodref          #31.#32        //  tests/sources/TestVMThread.createVM:()Ltests/sources/TestVMThread$VM;
+   #5 = Methodref          #31.#33        //  tests/sources/TestVMThread.releaseVM:(Ltests/sources/TestVMThread$VM;)V
+   #6 = Class              #34            //  tests/sources/TestVMThread$T
+   #7 = Class              #36            //  java/lang/Thread
+   #8 = Utf8               alpha
+   #9 = Class              #37            //  tests/sources/TestVMThread$VM
+  #10 = Utf8               VM
+  #11 = Utf8               InnerClasses
+  #12 = Utf8               Ltests/sources/TestVMThread$VM;
+  #13 = Utf8               this$0
+  #14 = Utf8               Ltests/sources/TestVMThread;
+  #15 = Utf8               <init>
+  #16 = Utf8               (Ltests/sources/TestVMThread;Ltests/sources/TestVMThread$VM;)V
+  #17 = Utf8               Code
+  #18 = Utf8               LineNumberTable
+  #19 = Utf8               run
+  #20 = Utf8               ()V
+  #21 = Utf8               StackMapTable
+  #22 = Class              #34            //  tests/sources/TestVMThread$T
+  #23 = Class              #37            //  tests/sources/TestVMThread$VM
+  #24 = Class              #38            //  java/lang/Object
+  #25 = Class              #39            //  java/lang/Throwable
+  #26 = Utf8               SourceFile
+  #27 = Utf8               TestVMThread.java
+  #28 = NameAndType        #13:#14        //  this$0:Ltests/sources/TestVMThread;
+  #29 = NameAndType        #15:#20        //  "<init>":()V
+  #30 = NameAndType        #8:#12         //  alpha:Ltests/sources/TestVMThread$VM;
+  #31 = Class              #40            //  tests/sources/TestVMThread
+  #32 = NameAndType        #41:#42        //  createVM:()Ltests/sources/TestVMThread$VM;
+  #33 = NameAndType        #43:#44        //  releaseVM:(Ltests/sources/TestVMThread$VM;)V
+  #34 = Utf8               tests/sources/TestVMThread$T
+  #35 = Utf8               T
+  #36 = Utf8               java/lang/Thread
+  #37 = Utf8               tests/sources/TestVMThread$VM
+  #38 = Utf8               java/lang/Object
+  #39 = Utf8               java/lang/Throwable
+  #40 = Utf8               tests/sources/TestVMThread
+  #41 = Utf8               createVM
+  #42 = Utf8               ()Ltests/sources/TestVMThread$VM;
+  #43 = Utf8               releaseVM
+  #44 = Utf8               (Ltests/sources/TestVMThread$VM;)V
+{
+  final tests.sources.TestVMThread this$0;
+    flags: ACC_FINAL, ACC_SYNTHETIC
+
+  public tests.sources.TestVMThread$T(tests.sources.TestVMThread, tests.sources.TestVMThread$VM);
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=3, args_size=3
+         0: aload_0       
+         1: aload_1       
+         2: putfield      #1                  // Field this$0:Ltests/sources/TestVMThread;
+         5: aload_0       
+         6: invokespecial #2                  // Method java/lang/Thread."<init>":()V
+         9: aload_0       
+        10: aload_2       
+        11: putfield      #3                  // Field alpha:Ltests/sources/TestVMThread$VM;
+        14: return        
+      LineNumberTable:
+        line 17: 0
+        line 18: 9
+        line 19: 14
+
+  public void run();
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=4, args_size=1
+         0: aload_0       
+         1: getfield      #1                  // Field this$0:Ltests/sources/TestVMThread;
+         4: invokevirtual #4                  // Method tests/sources/TestVMThread.createVM:()Ltests/sources/TestVMThread$VM;
+         7: astore_1      
+         8: aload_0       
+         9: getfield      #3                  // Field alpha:Ltests/sources/TestVMThread$VM;
+        12: dup           
+        13: astore_2      
+        14: monitorenter  
+        15: aload_0       
+        16: getfield      #1                  // Field this$0:Ltests/sources/TestVMThread;
+        19: aload_0       
+        20: getfield      #3                  // Field alpha:Ltests/sources/TestVMThread$VM;
+        23: invokevirtual #5                  // Method tests/sources/TestVMThread.releaseVM:(Ltests/sources/TestVMThread$VM;)V
+        26: aload_0       
+        27: aload_0       
+        28: getfield      #1                  // Field this$0:Ltests/sources/TestVMThread;
+        31: invokevirtual #4                  // Method tests/sources/TestVMThread.createVM:()Ltests/sources/TestVMThread$VM;
+        34: putfield      #3                  // Field alpha:Ltests/sources/TestVMThread$VM;
+        37: aload_2       
+        38: monitorexit   
+        39: goto          47
+        42: astore_3      
+        43: aload_2       
+        44: monitorexit   
+        45: aload_3       
+        46: athrow        
+        47: aload_0       
+        48: getfield      #1                  // Field this$0:Ltests/sources/TestVMThread;
+        51: aload_1       
+        52: invokevirtual #5                  // Method tests/sources/TestVMThread.releaseVM:(Ltests/sources/TestVMThread$VM;)V
+        55: return        
+      Exception table:
+         from    to  target type
+            15    39    42   any
+            42    45    42   any
+      LineNumberTable:
+        line 22: 0
+        line 23: 8
+        line 24: 15
+        line 25: 26
+        line 26: 37
+        line 27: 47
+        line 28: 55
+      StackMapTable: number_of_entries = 2
+           frame_type = 255 /* full_frame */
+          offset_delta = 42
+          locals = [ class tests/sources/TestVMThread$T, class tests/sources/TestVMThread$VM, class java/lang/Object ]
+          stack = [ class java/lang/Throwable ]
+           frame_type = 250 /* chop */
+          offset_delta = 4
+
+}
