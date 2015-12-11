@@ -98,10 +98,16 @@ Based on the work in previous papers, we define a way to compute behavioural typ
 
 
 \subsection{Datatypes}
-The datatypes we consider are $\Int{} = \C{} \cup \E{} \cup \{-\}$ for integer values (augmented with an undefined value to manage expressions that the verifier cannot handle exactly), and $VM = \{\alpha, \beta, \gamma, \dots\} \cup \{\texttt{this}\}$ as a set of names for virtual machines. $\C{}$ stands for the integer constants and is equal to $\N{}$, while $\E{}$ is the set of all expressions in which variables are involved, but can be handled by the verifier.
+The datatypes we consider are:
+\begin{itemize}
+\item $\Int{} = \C{} \cup \E{} \cup \{-\}$ for integer values (augmented with an undefined value to manage expressions that the verifier cannot handle exactly);
+\item $VM = \{\alpha, \beta, \gamma, \dots\} \cup \{\texttt{this}\}$ as a set of names for virtual machines;
+\item $T = \{f, g, \dots\}$ as a set of thread identifiers;
+\end{itemize}
+$\C{}$ stands for the integer constants and is equal to $\N{}$, while $\E{}$ is the set of all expressions in which variables are involved, but can be handled by the verifier.
 
 $\Gamma \in \Gset{}$ is a map $VM \mapsto \sigma = \{\delta, \top, \bot, a, \down{a}\}$ which holds information about the state of each virtual machine.
-A general datatype $\data{} = \Int{} \cup VM$ is defined to compactly integrate all datatypes stored in the stack and the memory. We also consider the 
+A general datatype $\data{} = \Int{} \cup VM \cup T$ is defined to compactly integrate all datatypes stored in the stack and the memory.
 
 \subsection{Machine abstractions}
 We consider an abstraction of the bytecode program $P$ with $n$ instructions as a function defined $\forall i \in [1 ; n]$. No checks on the domain of $P$ are made because the bytecode is only valid if all execution path end with a return statement, and in that case the analysis do not consider exceding lines of code.
@@ -112,6 +118,9 @@ The other abstractions we consider are:
 \item a stack $S \in \bS{} = \emptyset \cup (\data{} \times \bS{})$;
 \item a constant table $\Const{} \text{ where } \Const{}(i)$ denotes the constant $\#i$ of the bytecode unit.
 \end{itemize}
+
+To resolve the chain of constants we consider a function $c : \N{} \mapsto \texttt{String}$ that computes the closure of references and builds the identifier for invoked and referred classes and methods.
+
 The JVM state is abstracted with a memory $F$ initially filled with the parameters of the method or program, and a stack frame $S$ initially empty. On the stack $S$ are defined the operations with the trivial semanthics, given the convention that $a\cdot b = \{a, b\} $:
 \[
 top(S): \bS{} \mapsto \data{}.top(S) = x \text{ if } S = x \cdot S' \in \bS{}
@@ -216,11 +225,22 @@ The analysis of the program is performed in iterations of sequential scans, in w
 
 The analysis will then create, at the end of the last iteration, a set of $\bB{i}$ defined for all instructions, that will be analysed by the theorem prover and converted into cost functions.
 
-\subsection{Open problems:}
+\section{Multithreading}
+Multithread computation is partially handled by the theorem prover. Since the whole structure is based on recursion, the cost function for methods and threads will be recursive too. The behaviour types to express method calls are:
 \begin{itemize}
-\item even if computation from created VM is considered not to affect the VM environment, one can still have multiple machines or threads running the same code. While a machine may not be aware of the VMs created by another one, different threads may access the same global variables, therefore creating race conditions on the access of these variables. In the current version the program is supposed to be non-concurrent, but in the future a way to detect synchronized areas should be considered.
+\item $\nu f$, to express the call of a method or the start of a thread;
+\item $f^\checkmark$, to express the synchronization of an asynchronous method or thread. Synchronous methods are synchronized right after being called.
 \end{itemize}
+The theorem prover will compute the right cost functions at analysis time.
 
+We consider a simpler use case in which threads and methods cannot return virtual machines to the main thread and can only deallocate the machines that it receives as parameter. As a result, we do not need to check the synchronized sections.
+
+The method itself is typed as $[peak, net], R$ where:
+\begin{itemize}
+\item $peak$ is the maximum number of virtual machines created within the method;
+\item $net$ is the number of virtual machines that are active when the method ends. It may be negative if the method releases more virtual machines than the ones it creates.
+\item $R$ is the set of released global virtual machines. The local virtual machines are not considered of interest, as their references are forever lost once the method returns.
+\end{itemize}
 
 \newpage
 \section{Typing rules (must be reviewed to reflect the usage of $\Sigma$)}
