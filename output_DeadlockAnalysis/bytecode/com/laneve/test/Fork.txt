@@ -1,0 +1,61 @@
+Classfile /Users/andrea/Documents/workspace/bytecodedeadlockanalysis/output_DeadlockAnalysis/classFiles/com/laneve/test/Fork.class
+  Last modified 21-giu-2015; size 323 bytes
+  MD5 checksum 1ee3162b1fc0bd39f9ffd11529670fb3
+  Compiled from "DiningPhilosopher.java"
+class com.laneve.test.Fork
+  minor version: 0
+  major version: 52
+  flags: ACC_SUPER
+Constant pool:
+   #1 = Methodref          #4.#15         // java/lang/Object."<init>":()V
+   #2 = Fieldref           #3.#16         // com/laneve/test/Fork.number:I
+   #3 = Class              #17            // com/laneve/test/Fork
+   #4 = Class              #18            // java/lang/Object
+   #5 = Utf8               number
+   #6 = Utf8               I
+   #7 = Utf8               <init>
+   #8 = Utf8               (I)V
+   #9 = Utf8               Code
+  #10 = Utf8               LineNumberTable
+  #11 = Utf8               getNumber
+  #12 = Utf8               ()I
+  #13 = Utf8               SourceFile
+  #14 = Utf8               DiningPhilosopher.java
+  #15 = NameAndType        #7:#19         // "<init>":()V
+  #16 = NameAndType        #5:#6          // number:I
+  #17 = Utf8               com/laneve/test/Fork
+  #18 = Utf8               java/lang/Object
+  #19 = Utf8               ()V
+{
+  private int number;
+    descriptor: I
+    flags: ACC_PRIVATE
+
+  public com.laneve.test.Fork(int);
+    descriptor: (I)V
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=2, args_size=2
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: aload_0
+         5: iload_1
+         6: putfield      #2                  // Field number:I
+         9: return
+      LineNumberTable:
+        line 76: 0
+        line 77: 4
+        line 78: 9
+
+  public int getNumber();
+    descriptor: ()I
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: getfield      #2                  // Field number:I
+         4: ireturn
+      LineNumberTable:
+        line 81: 0
+}
+SourceFile: "DiningPhilosopher.java"

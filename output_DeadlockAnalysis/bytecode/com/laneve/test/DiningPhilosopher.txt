@@ -1,0 +1,435 @@
+Classfile /Users/andrea/Documents/workspace/bytecodedeadlockanalysis/output_DeadlockAnalysis/classFiles/com/laneve/test/DiningPhilosopher.class
+  Last modified 21-giu-2015; size 2134 bytes
+  MD5 checksum e7aaa643d0c720b618f23a84bfc83d7f
+  Compiled from "DiningPhilosopher.java"
+public class com.laneve.test.DiningPhilosopher extends java.lang.Thread
+  minor version: 0
+  major version: 52
+  flags: ACC_PUBLIC, ACC_SUPER
+Constant pool:
+    #1 = Methodref          #37.#65       // java/lang/Thread."<init>":()V
+    #2 = Fieldref           #32.#66       // com/laneve/test/DiningPhilosopher.number:I
+    #3 = Fieldref           #32.#67       // com/laneve/test/DiningPhilosopher.left:Lcom/laneve/test/Fork;
+    #4 = Fieldref           #32.#68       // com/laneve/test/DiningPhilosopher.right:Lcom/laneve/test/Fork;
+    #5 = Class              #69           // java/lang/StringBuilder
+    #6 = Methodref          #5.#65        // java/lang/StringBuilder."<init>":()V
+    #7 = String             #70           // Fil no.
+    #8 = Methodref          #5.#71        // java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+    #9 = Methodref          #5.#72        // java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+   #10 = Methodref          #5.#73        // java/lang/StringBuilder.toString:()Ljava/lang/String;
+   #11 = Fieldref           #74.#75       // java/lang/System.out:Ljava/io/PrintStream;
+   #12 = Methodref          #32.#73       // com/laneve/test/DiningPhilosopher.toString:()Ljava/lang/String;
+   #13 = String             #76           //  is thinking
+   #14 = Methodref          #77.#78       // java/io/PrintStream.println:(Ljava/lang/String;)V
+   #15 = Fieldref           #32.#79       // com/laneve/test/DiningPhilosopher.random:Ljava/util/Random;
+   #16 = Methodref          #35.#80       // java/util/Random.nextFloat:()F
+   #17 = Long               1000l
+   #19 = Methodref          #37.#81       // java/lang/Thread.sleep:(J)V
+   #20 = Class              #82           // java/lang/InterruptedException
+   #21 = Methodref          #20.#83       // java/lang/InterruptedException.printStackTrace:()V
+   #22 = Methodref          #5.#84        // java/lang/StringBuilder.append:(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+   #23 = String             #85           //  takes left fork no.
+   #24 = Methodref          #30.#86       // com/laneve/test/Fork.getNumber:()I
+   #25 = String             #87           //  takes right fork no.
+   #26 = String             #88           //  is eating
+   #27 = Methodref          #32.#89       // com/laneve/test/DiningPhilosopher.think:()V
+   #28 = Methodref          #32.#90       // com/laneve/test/DiningPhilosopher.eat:()V
+   #29 = Methodref          #32.#91       // com/laneve/test/DiningPhilosopher.run:()V
+   #30 = Class              #92           // com/laneve/test/Fork
+   #31 = Methodref          #30.#93       // com/laneve/test/Fork."<init>":(I)V
+   #32 = Class              #94           // com/laneve/test/DiningPhilosopher
+   #33 = Methodref          #32.#95       // com/laneve/test/DiningPhilosopher."<init>":(ILcom/laneve/test/Fork;Lcom/laneve/test/Fork;)V
+   #34 = Methodref          #32.#96       // com/laneve/test/DiningPhilosopher.start:()V
+   #35 = Class              #97           // java/util/Random
+   #36 = Methodref          #35.#65       // java/util/Random."<init>":()V
+   #37 = Class              #98           // java/lang/Thread
+   #38 = Utf8               number
+   #39 = Utf8               I
+   #40 = Utf8               left
+   #41 = Utf8               Lcom/laneve/test/Fork;
+   #42 = Utf8               right
+   #43 = Utf8               random
+   #44 = Utf8               Ljava/util/Random;
+   #45 = Utf8               <init>
+   #46 = Utf8               (ILcom/laneve/test/Fork;Lcom/laneve/test/Fork;)V
+   #47 = Utf8               Code
+   #48 = Utf8               LineNumberTable
+   #49 = Utf8               toString
+   #50 = Utf8               ()Ljava/lang/String;
+   #51 = Utf8               think
+   #52 = Utf8               ()V
+   #53 = Utf8               StackMapTable
+   #54 = Class              #82           // java/lang/InterruptedException
+   #55 = Utf8               eat
+   #56 = Class              #94           // com/laneve/test/DiningPhilosopher
+   #57 = Class              #99           // java/lang/Object
+   #58 = Class              #100          // java/lang/Throwable
+   #59 = Utf8               run
+   #60 = Utf8               main
+   #61 = Utf8               ([Ljava/lang/String;)V
+   #62 = Utf8               <clinit>
+   #63 = Utf8               SourceFile
+   #64 = Utf8               DiningPhilosopher.java
+   #65 = NameAndType        #45:#52       // "<init>":()V
+   #66 = NameAndType        #38:#39       // number:I
+   #67 = NameAndType        #40:#41       // left:Lcom/laneve/test/Fork;
+   #68 = NameAndType        #42:#41       // right:Lcom/laneve/test/Fork;
+   #69 = Utf8               java/lang/StringBuilder
+   #70 = Utf8               Fil no.
+   #71 = NameAndType        #101:#102     // append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+   #72 = NameAndType        #101:#103     // append:(I)Ljava/lang/StringBuilder;
+   #73 = NameAndType        #49:#50       // toString:()Ljava/lang/String;
+   #74 = Class              #104          // java/lang/System
+   #75 = NameAndType        #105:#106     // out:Ljava/io/PrintStream;
+   #76 = Utf8                is thinking
+   #77 = Class              #107          // java/io/PrintStream
+   #78 = NameAndType        #108:#109     // println:(Ljava/lang/String;)V
+   #79 = NameAndType        #43:#44       // random:Ljava/util/Random;
+   #80 = NameAndType        #110:#111     // nextFloat:()F
+   #81 = NameAndType        #112:#113     // sleep:(J)V
+   #82 = Utf8               java/lang/InterruptedException
+   #83 = NameAndType        #114:#52      // printStackTrace:()V
+   #84 = NameAndType        #101:#115     // append:(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+   #85 = Utf8                takes left fork no.
+   #86 = NameAndType        #116:#117     // getNumber:()I
+   #87 = Utf8                takes right fork no.
+   #88 = Utf8                is eating
+   #89 = NameAndType        #51:#52       // think:()V
+   #90 = NameAndType        #55:#52       // eat:()V
+   #91 = NameAndType        #59:#52       // run:()V
+   #92 = Utf8               com/laneve/test/Fork
+   #93 = NameAndType        #45:#118      // "<init>":(I)V
+   #94 = Utf8               com/laneve/test/DiningPhilosopher
+   #95 = NameAndType        #45:#46       // "<init>":(ILcom/laneve/test/Fork;Lcom/laneve/test/Fork;)V
+   #96 = NameAndType        #119:#52      // start:()V
+   #97 = Utf8               java/util/Random
+   #98 = Utf8               java/lang/Thread
+   #99 = Utf8               java/lang/Object
+  #100 = Utf8               java/lang/Throwable
+  #101 = Utf8               append
+  #102 = Utf8               (Ljava/lang/String;)Ljava/lang/StringBuilder;
+  #103 = Utf8               (I)Ljava/lang/StringBuilder;
+  #104 = Utf8               java/lang/System
+  #105 = Utf8               out
+  #106 = Utf8               Ljava/io/PrintStream;
+  #107 = Utf8               java/io/PrintStream
+  #108 = Utf8               println
+  #109 = Utf8               (Ljava/lang/String;)V
+  #110 = Utf8               nextFloat
+  #111 = Utf8               ()F
+  #112 = Utf8               sleep
+  #113 = Utf8               (J)V
+  #114 = Utf8               printStackTrace
+  #115 = Utf8               (Ljava/lang/Object;)Ljava/lang/StringBuilder;
+  #116 = Utf8               getNumber
+  #117 = Utf8               ()I
+  #118 = Utf8               (I)V
+  #119 = Utf8               start
+{
+  private int number;
+    descriptor: I
+    flags: ACC_PRIVATE
+
+  private com.laneve.test.Fork left;
+    descriptor: Lcom/laneve/test/Fork;
+    flags: ACC_PRIVATE
+
+  private com.laneve.test.Fork right;
+    descriptor: Lcom/laneve/test/Fork;
+    flags: ACC_PRIVATE
+
+  private static java.util.Random random;
+    descriptor: Ljava/util/Random;
+    flags: ACC_PRIVATE, ACC_STATIC
+
+  public com.laneve.test.DiningPhilosopher(int, com.laneve.test.Fork, com.laneve.test.Fork);
+    descriptor: (ILcom/laneve/test/Fork;Lcom/laneve/test/Fork;)V
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=4, args_size=4
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Thread."<init>":()V
+         4: aload_0
+         5: iload_1
+         6: putfield      #2                  // Field number:I
+         9: aload_0
+        10: aload_2
+        11: putfield      #3                  // Field left:Lcom/laneve/test/Fork;
+        14: aload_0
+        15: aload_3
+        16: putfield      #4                  // Field right:Lcom/laneve/test/Fork;
+        19: return
+      LineNumberTable:
+        line 12: 0
+        line 13: 4
+        line 14: 9
+        line 15: 14
+        line 16: 19
+
+  public java.lang.String toString();
+    descriptor: ()Ljava/lang/String;
+    flags: ACC_PUBLIC
+    Code:
+      stack=2, locals=1, args_size=1
+         0: new           #5                  // class java/lang/StringBuilder
+         3: dup
+         4: invokespecial #6                  // Method java/lang/StringBuilder."<init>":()V
+         7: ldc           #7                  // String Fil no.
+         9: invokevirtual #8                  // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+        12: aload_0
+        13: getfield      #2                  // Field number:I
+        16: invokevirtual #9                  // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+        19: invokevirtual #10                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+        22: areturn
+      LineNumberTable:
+        line 19: 0
+
+  private void think();
+    descriptor: ()V
+    flags: ACC_PRIVATE
+    Code:
+      stack=4, locals=2, args_size=1
+         0: getstatic     #11                 // Field java/lang/System.out:Ljava/io/PrintStream;
+         3: new           #5                  // class java/lang/StringBuilder
+         6: dup
+         7: invokespecial #6                  // Method java/lang/StringBuilder."<init>":()V
+        10: aload_0
+        11: invokevirtual #12                 // Method toString:()Ljava/lang/String;
+        14: invokevirtual #8                  // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+        17: ldc           #13                 // String  is thinking
+        19: invokevirtual #8                  // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+        22: invokevirtual #10                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+        25: invokevirtual #14                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        28: getstatic     #15                 // Field random:Ljava/util/Random;
+        31: invokevirtual #16                 // Method java/util/Random.nextFloat:()F
+        34: f2l
+        35: ldc2_w        #17                 // long 1000l
+        38: lmul
+        39: invokestatic  #19                 // Method java/lang/Thread.sleep:(J)V
+        42: goto          50
+        45: astore_1
+        46: aload_1
+        47: invokevirtual #21                 // Method java/lang/InterruptedException.printStackTrace:()V
+        50: return
+      Exception table:
+         from    to  target type
+            28    42    45   Class java/lang/InterruptedException
+      LineNumberTable:
+        line 23: 0
+        line 26: 28
+        line 29: 42
+        line 27: 45
+        line 28: 46
+        line 30: 50
+      StackMapTable: number_of_entries = 2
+        frame_type = 109 /* same_locals_1_stack_item */
+          stack = [ class java/lang/InterruptedException ]
+        frame_type = 4 /* same */
+
+  private void eat();
+    descriptor: ()V
+    flags: ACC_PRIVATE
+    Code:
+      stack=4, locals=6, args_size=1
+         0: getstatic     #11                 // Field java/lang/System.out:Ljava/io/PrintStream;
+         3: new           #5                  // class java/lang/StringBuilder
+         6: dup
+         7: invokespecial #6                  // Method java/lang/StringBuilder."<init>":()V
+        10: aload_0
+        11: invokevirtual #22                 // Method java/lang/StringBuilder.append:(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+        14: ldc           #23                 // String  takes left fork no.
+        16: invokevirtual #8                  // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+        19: aload_0
+        20: getfield      #3                  // Field left:Lcom/laneve/test/Fork;
+        23: invokevirtual #24                 // Method com/laneve/test/Fork.getNumber:()I
+        26: invokevirtual #9                  // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+        29: invokevirtual #10                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+        32: invokevirtual #14                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        35: aload_0
+        36: getfield      #3                  // Field left:Lcom/laneve/test/Fork;
+        39: dup
+        40: astore_1
+        41: monitorenter
+        42: getstatic     #11                 // Field java/lang/System.out:Ljava/io/PrintStream;
+        45: new           #5                  // class java/lang/StringBuilder
+        48: dup
+        49: invokespecial #6                  // Method java/lang/StringBuilder."<init>":()V
+        52: aload_0
+        53: invokevirtual #22                 // Method java/lang/StringBuilder.append:(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+        56: ldc           #25                 // String  takes right fork no.
+        58: invokevirtual #8                  // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+        61: aload_0
+        62: getfield      #4                  // Field right:Lcom/laneve/test/Fork;
+        65: invokevirtual #24                 // Method com/laneve/test/Fork.getNumber:()I
+        68: invokevirtual #9                  // Method java/lang/StringBuilder.append:(I)Ljava/lang/StringBuilder;
+        71: invokevirtual #10                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+        74: invokevirtual #14                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+        77: aload_0
+        78: getfield      #4                  // Field right:Lcom/laneve/test/Fork;
+        81: dup
+        82: astore_2
+        83: monitorenter
+        84: getstatic     #11                 // Field java/lang/System.out:Ljava/io/PrintStream;
+        87: new           #5                  // class java/lang/StringBuilder
+        90: dup
+        91: invokespecial #6                  // Method java/lang/StringBuilder."<init>":()V
+        94: aload_0
+        95: invokevirtual #22                 // Method java/lang/StringBuilder.append:(Ljava/lang/Object;)Ljava/lang/StringBuilder;
+        98: ldc           #26                 // String  is eating
+       100: invokevirtual #8                  // Method java/lang/StringBuilder.append:(Ljava/lang/String;)Ljava/lang/StringBuilder;
+       103: invokevirtual #10                 // Method java/lang/StringBuilder.toString:()Ljava/lang/String;
+       106: invokevirtual #14                 // Method java/io/PrintStream.println:(Ljava/lang/String;)V
+       109: getstatic     #15                 // Field random:Ljava/util/Random;
+       112: invokevirtual #16                 // Method java/util/Random.nextFloat:()F
+       115: f2l
+       116: ldc2_w        #17                 // long 1000l
+       119: lmul
+       120: invokestatic  #19                 // Method java/lang/Thread.sleep:(J)V
+       123: goto          131
+       126: astore_3
+       127: aload_3
+       128: invokevirtual #21                 // Method java/lang/InterruptedException.printStackTrace:()V
+       131: aload_2
+       132: monitorexit
+       133: goto          143
+       136: astore        4
+       138: aload_2
+       139: monitorexit
+       140: aload         4
+       142: athrow
+       143: aload_1
+       144: monitorexit
+       145: goto          155
+       148: astore        5
+       150: aload_1
+       151: monitorexit
+       152: aload         5
+       154: athrow
+       155: return
+      Exception table:
+         from    to  target type
+           109   123   126   Class java/lang/InterruptedException
+            84   133   136   any
+           136   140   136   any
+            42   145   148   any
+           148   152   148   any
+      LineNumberTable:
+        line 33: 0
+        line 34: 35
+        line 35: 42
+        line 36: 77
+        line 37: 84
+        line 39: 109
+        line 42: 123
+        line 40: 126
+        line 41: 127
+        line 43: 131
+        line 44: 143
+        line 45: 155
+      StackMapTable: number_of_entries = 6
+        frame_type = 255 /* full_frame */
+          offset_delta = 126
+          locals = [ class com/laneve/test/DiningPhilosopher, class java/lang/Object, class java/lang/Object ]
+          stack = [ class java/lang/InterruptedException ]
+        frame_type = 4 /* same */
+        frame_type = 68 /* same_locals_1_stack_item */
+          stack = [ class java/lang/Throwable ]
+        frame_type = 250 /* chop */
+          offset_delta = 6
+        frame_type = 68 /* same_locals_1_stack_item */
+          stack = [ class java/lang/Throwable ]
+        frame_type = 250 /* chop */
+          offset_delta = 6
+
+  public void run();
+    descriptor: ()V
+    flags: ACC_PUBLIC
+    Code:
+      stack=1, locals=1, args_size=1
+         0: aload_0
+         1: invokespecial #27                 // Method think:()V
+         4: aload_0
+         5: invokespecial #28                 // Method eat:()V
+         8: aload_0
+         9: invokevirtual #29                 // Method run:()V
+        12: return
+      LineNumberTable:
+        line 48: 0
+        line 49: 4
+        line 50: 8
+        line 51: 12
+
+  public static void main(java.lang.String[]);
+    descriptor: ([Ljava/lang/String;)V
+    flags: ACC_PUBLIC, ACC_STATIC
+    Code:
+      stack=5, locals=7, args_size=1
+         0: new           #30                 // class com/laneve/test/Fork
+         3: dup
+         4: iconst_0
+         5: invokespecial #31                 // Method com/laneve/test/Fork."<init>":(I)V
+         8: astore_1
+         9: new           #30                 // class com/laneve/test/Fork
+        12: dup
+        13: iconst_1
+        14: invokespecial #31                 // Method com/laneve/test/Fork."<init>":(I)V
+        17: astore_2
+        18: new           #30                 // class com/laneve/test/Fork
+        21: dup
+        22: iconst_2
+        23: invokespecial #31                 // Method com/laneve/test/Fork."<init>":(I)V
+        26: astore_3
+        27: new           #32                 // class com/laneve/test/DiningPhilosopher
+        30: dup
+        31: iconst_0
+        32: aload_1
+        33: aload_3
+        34: invokespecial #33                 // Method "<init>":(ILcom/laneve/test/Fork;Lcom/laneve/test/Fork;)V
+        37: astore        4
+        39: new           #32                 // class com/laneve/test/DiningPhilosopher
+        42: dup
+        43: iconst_1
+        44: aload_2
+        45: aload_1
+        46: invokespecial #33                 // Method "<init>":(ILcom/laneve/test/Fork;Lcom/laneve/test/Fork;)V
+        49: astore        5
+        51: new           #32                 // class com/laneve/test/DiningPhilosopher
+        54: dup
+        55: iconst_2
+        56: aload_3
+        57: aload_2
+        58: invokespecial #33                 // Method "<init>":(ILcom/laneve/test/Fork;Lcom/laneve/test/Fork;)V
+        61: astore        6
+        63: aload         4
+        65: invokevirtual #34                 // Method start:()V
+        68: aload         5
+        70: invokevirtual #34                 // Method start:()V
+        73: aload         6
+        75: invokevirtual #34                 // Method start:()V
+        78: return
+      LineNumberTable:
+        line 55: 0
+        line 56: 9
+        line 57: 18
+        line 59: 27
+        line 61: 39
+        line 62: 51
+        line 64: 63
+        line 65: 68
+        line 66: 73
+        line 68: 78
+
+  static {};
+    descriptor: ()V
+    flags: ACC_STATIC
+    Code:
+      stack=2, locals=0, args_size=0
+         0: new           #35                 // class java/util/Random
+         3: dup
+         4: invokespecial #36                 // Method java/util/Random."<init>":()V
+         7: putstatic     #15                 // Field random:Ljava/util/Random;
+        10: return
+      LineNumberTable:
+        line 10: 0
+}
+SourceFile: "DiningPhilosopher.java"
