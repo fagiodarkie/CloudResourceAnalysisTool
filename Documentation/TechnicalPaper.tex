@@ -191,7 +191,7 @@ We define a partial ordering function in $\Int{}$:
 a = - \wedge b \neq -\\
 a \in \E{} \wedge b \in \C{}
 \end{cases}\]
-\[\eqs{} \subset \data{} \times \data{}: \sigma \times \sigma \cup \C{} \times \C{} \cup \E{} \times \E{} \cup \{(-, -)\}\]
+\[\eqs{} \subset \Int{} \times \Int{}: \C{} \times \C{} \cup \E{} \times \E{} \cup \{(-, -)\}\]
 
 Starting from this function, we define a partial ordering between stacks and between memories:
 
@@ -235,19 +235,24 @@ The theorem prover will compute the right cost functions at analysis time.
 
 We consider a simpler use case in which threads and methods cannot return virtual machines to the main thread and can only deallocate the machines that it receives as parameter. As a result, we do not need to check the synchronized sections.
 
-The method itself is typed as $[peak, net], R$ where:
+The method itself is typed as $b, R$ where:
 \begin{itemize}
-\item $peak$ is the maximum number of virtual machines created within the method;
-\item $net$ is the number of virtual machines that are active when the method ends. It may be negative if the method releases more virtual machines than the ones it creates.
+\item $b$ is the behavioral type of the method, computed as if the method was a program. Since the method body itself starts from instruction 1 like the program, to tell apart the behavior function computing the method's behavioral type from the one computing the program's behavioral type the former one will be called $\bB{}^M$, having otherwise the same semanthics.
 \item $R$ is the set of released global virtual machines. The local virtual machines are not considered of interest, as their references are forever lost once the method returns.
 \end{itemize}
 
 \newpage
-\section{Typing rules (must be reviewed to reflect the usage of $\Sigma$)}
+\section{Typing rules}
 (T-Program)
 \begin{equation*}
 \frac{}
 {\Gamma, F,\emptyset \vdash P: \bB{1}(F, \emptyset)}
+\end{equation*}
+\\
+(T-Method)
+\begin{equation*}
+\frac{} % \bB{1}^M(F, \emptyset) =b, R^M}
+{\Gamma, F,\emptyset \vdash M: \bB{1}^M(F, \emptyset)}
 \end{equation*}
 \\
 (T-Return)
@@ -331,6 +336,39 @@ P[i] = \text{\texttt{invokevirtual createVM} }, \beta \text{ fresh}}
 \begin{equation*}
 \frac{P[i] = \text{\texttt{ldc} } x, \Const{}(x) = -}
 {\Gamma \vdash \bB{i}(F_i, S_i) = \bB{i+1}(F_i, \text{push}(-, S_i))}
+\end{equation*}
+\\
+(T-Monitorenter)
+\begin{equation*}
+\frac{P[i] = \text{\texttt{monitorenter}}}
+{\Gamma \vdash \bB{i}(F_i, S_i) = \bB{i+1}(F_i, S_i)}
+\end{equation*}
+\\
+(T-Monitorexit)
+\begin{equation*}
+\frac{P[i] = \text{\texttt{monitorexit}}}
+{\Gamma \vdash \bB{i}(F_i, S_i) = \bB{i+1}(F_i, S_i)}
+\end{equation*}
+\\
+(T-Thread-New)
+\begin{equation*}
+\frac{\begin{aligned}
+P[i] = \text{\texttt{invokespecial} } x, \Const{}(x) = \texttt{Thread.init},\\
+f \text{ fresh}, \texttt{ nargs}(\texttt{Thread.init}) = n, S_{i+1} = \text{pop}^n(S_i)
+\end{aligned}}
+{\Gamma \vdash \bB{i}(F_i, S_i) = \bB{i+1}(F_i, \text{push}(f, S_{i+1})) \rhd \Gamma[f = (-, \text{run}(\text{top}^0(S_i), \dots \text{top}^{n-1}(S_i)), R)]}
+\end{equation*}
+\\
+(T-Thread-Run)
+\begin{equation*}
+\frac{P[i] = \text{\texttt{invokevirtual} } x, \Const{}(x) = \texttt{Thread.run}, \text{ top}(S_i) = f \in T}
+{\Gamma \vdash \bB{i}(F_i, S_i) = \nu f \fatsemi \bB{i+1}(F_i, S_i)}
+\end{equation*}
+\\
+(T-Thread-Join)
+\begin{equation*}
+\frac{P[i] = \text{\texttt{invokevirtual} } x, \Const{}(x) = \texttt{Thread.join}, f = \text{top}(S_i)}
+{\Gamma \vdash \bB{i}(F_i, S_i) = f^\checkmark \fatsemi \bB{i+1}(F_i, S_i)}
 \end{equation*}
 
 \texttt{More on the way...}
