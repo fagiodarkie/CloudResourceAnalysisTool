@@ -50,6 +50,7 @@
 \newcommand{\less}{<_\Sigma}
 \newcommand{\leqs}{\leq_\Sigma}
 \newcommand{\Const}{\texttt{Const}}
+\newcommand{\wrt}{with respect to}
 
 \renewcommand{\emptyset}{\varnothing}
 
@@ -240,6 +241,34 @@ The method itself is typed as $b, R$ where:
 \item $b$ is the behavioral type of the method, computed as if the method was a program. Since the method body itself starts from instruction 1 like the program, to tell apart the behavior function computing the method's behavioral type from the one computing the program's behavioral type the former one will be called $\bB{}^M$, having otherwise the same semanthics.
 \item $R$ is the set of released global virtual machines. The local virtual machines are not considered of interest, as their references are forever lost once the method returns.
 \end{itemize}
+
+\pagebreak
+\subsubsection{Open problems}
+To be able to release virtual machines, the thread must save their references somewhere before the method \texttt{run()} is called. This may be done either in its constructor or in a custom method. This behavior leads to 2 main problems:
+\begin{enumerate}
+\item there is no restriction on where the virtual machines are passed to the thread. Consequently, a thread must be managed in a complex way to monitor its fields;
+\item there is no way to understand whether a parameter or field is a VM or an integer, due to lack of information about types in the bytecode. The only way to know that a field is a VM is to see that it is created via a creation or that a release is invoked on it.
+\end{enumerate}
+These problems bring to a major issue: it is extremely difficult to ensure that a virtual machine from the main thread is assigned to a field of the called thread: the process that brings to the set of released VMs is still unknown.
+\subsubsection{Possible solution}
+During the typing of the thread, we follow these assumptions:
+\begin{itemize}
+\item the parameters of the constructor are assigned to the fields in the order they are specified. If the stack has the following form: $\alpha\cdot\beta\cdot n\cdot S$, then the thread is constructed as $T(\alpha, \beta, n)$ and its fields with constant pool $\#i, \#i+1, \#i+2$ are actually $\alpha, \beta, n$;
+\item no other method which modifies the fields is invoked before \texttt{run};
+\item new VM names follow a fixed, shared convention (eg. vm1, vm2, vm3, etc) and are not random;
+\item when dealing with fields in the \texttt{run} method, we initially type each field as non defined until a \texttt{release} or \texttt{store} VM on them reveals their type as VM fields, updating $\bB{1}^T$ and all the remaining $\bB{}$ accordingly.
+\end{itemize}
+
+In these hypothesis, we can type safely the thread in the following manner:
+\begin{enumerate}
+\item the first virtual machines identified in the \texttt{run} method are named as the first VM created (say, vm1 and vm2 \wrt{} the previous example);
+\item if the fields are overwritten, the vm names will obviously change;
+\item no changes are made on the released VM set (all the released VMs are put inside $R$);
+\item when a \texttt{join} occurs, the set R is checked: assuming that the thread released vm1 and overwrote vm2 with vm5 releasing it afterwards, we will have $R = \{vm1, vm5\}$ (as if $vm1 = \alpha, vm2 = \beta$ etc, and $R = \{\alpha, \epsilon\}$) while in the environment the thread will have value $f = (-, run(vm143, vm352, 13-x), \{vm1, vm5\})$, where vm143 and vm352 are some VMs created in the main thread and vm1, vm5 the machines released in the thread;
+\item since vm1 refers to the first vm of the thread, vm143 will be released in the environment;
+\item since vm5 refers to the 5th vm of the thread but the constructor only contains 2, it is counted as a local vm (it actually is) and its presence in $R$ means nothing \wrt{} the environment.
+\end{enumerate}
+
 
 \newpage
 \section{Typing rules}
