@@ -1,4 +1,3 @@
-
 \newcommand{\filedate}{\today}
 \newcommand{\fileversion}{Version 0.1}
 
@@ -90,7 +89,15 @@
 \maketitle
 
 \begin{abstract}
-Based on the work in previous papers, we define a way to compute behavioural types for most Java bytecode instructions, in a way that they may be handled by automated verifiers to compute cost functions.
+Based on the work in previous papers, we define a way to compute behavioural types for most Java bytecode instructions, in a way that they may be handled by automated verifiers to compute cost functions.\\
+
+Theory points to fix up:
+\begin{enumerate}
+\item define multithread semanthics;
+\item check the correctness of the rules and find out any exception that should be considered;
+\item write out all the actual rules (no pseudocode) for all the instructions;
+\item analize the exception solution from last year and see if it is a viable solution or if it needs to be fixed.
+\end{enumerate}
 
 \end{abstract}
 
@@ -225,11 +232,11 @@ The analysis of the program is performed in iterations of sequential scans, in w
 \end{itemize}
 
 The analysis will then create, at the end of the last iteration, a set of $\bB{i}$ defined for all instructions, that will be analysed by the theorem prover and converted into cost functions.
-
+\pagebreak
 \section{Multithreading}
 Multithread computation is partially handled by the theorem prover. Since the whole structure is based on recursion, the cost function for methods and threads will be recursive too. The behaviour types to express method calls are:
 \begin{itemize}
-\item $\nu f$, to express the call of a method or the start of a thread;
+\item $\nu f:\texttt{run}(t_1:par_1 \dots t_n:par_n)$, to express the call of a method or the start of a thread;
 \item $f^\checkmark$, to express the synchronization of an asynchronous method or thread. Synchronous methods are synchronized right after being called.
 \end{itemize}
 The theorem prover will compute the right cost functions at analysis time.
@@ -241,8 +248,8 @@ The method itself is typed as $b, R$ where:
 \item $b$ is the behavioral type of the method, computed as if the method was a program. Since the method body itself starts from instruction 1 like the program, to tell apart the behavior function computing the method's behavioral type from the one computing the program's behavioral type the former one will be called $\bB{}^M$, having otherwise the same semanthics.
 \item $R$ is the set of released global virtual machines. The local virtual machines are not considered of interest, as their references are forever lost once the method returns.
 \end{itemize}
+Both of them are parametric \wrt{} the parameters of the method \texttt{run}.
 
-\pagebreak
 \subsubsection{Open problems}
 To be able to release virtual machines, the thread must save their references somewhere before the method \texttt{run()} is called. This may be done either in its constructor or in a custom method. This behavior leads to 2 main problems:
 \begin{enumerate}
@@ -250,25 +257,25 @@ To be able to release virtual machines, the thread must save their references so
 \item there is no way to understand whether a parameter or field is a VM or an integer, due to lack of information about types in the bytecode. The only way to know that a field is a VM is to see that it is created via a creation or that a release is invoked on it.
 \end{enumerate}
 These problems bring to a major issue: it is extremely difficult to ensure that a virtual machine from the main thread is assigned to a field of the called thread: the process that brings to the set of released VMs is still unknown.
-\subsubsection{Possible solution}
-During the typing of the thread, we follow these assumptions:
+\subsubsection{Solution proposed by Laneve}
 \begin{itemize}
-\item the parameters of the constructor are assigned to the fields in the order they are specified. If the stack has the following form: $\alpha\cdot\beta\cdot n\cdot S$, then the thread is constructed as $T(\alpha, \beta, n)$ and its fields with constant pool $\#i, \#i+1, \#i+2$ are actually $\alpha, \beta, n$;
-\item no other method which modifies the fields is invoked before \texttt{run};
-\item new VM names follow a fixed, shared convention (eg. vm1, vm2, vm3, etc) and are not random;
-\item when dealing with fields in the \texttt{run} method, we initially type each field as non defined until a \texttt{release} or \texttt{store} VM on them reveals their type as VM fields, updating $\bB{1}^T$ and all the remaining $\bB{}$ accordingly.
+\item types can be infered by the constant pool, because all methods are correctly typed and annotated\footnote{eg. \texttt{java.lang.Thread.run(\$V)\$V}};
+\item the current notation about memory and stack is not complete: we need a way to express class-related fields too. We can think of it as a simple map \texttt{String} $\mapsto \data{}$ for the time being;
+\item in some way, we understand that in the thread declaration each (or some) parameter is assigned to one or more specific fields of the thread: therefore, since the behavioral type and R both are parametric \wrt{} the fields, exploiting the link between field name, formal parameter and actual parameter we are able to understand which machines are released.
+\item This solution works given the restriction that threads only acquire external virtual machine references in the constructor and only release them within the \texttt{run} method. Also, we need to ensure that no method aside from the constructor reassigns fields.
+\end{itemize}
+\subsubsection{Variations on the previous solution}
+Another option is to type the thread essentially as a couple $\langle C, F \rangle$ where:
+\begin{itemize}
+\item C is the complete class name, in order to be able to reference its actual methods;
+\item F is the field map formerly hypotesized.
 \end{itemize}
 
-In these hypothesis, we can type safely the thread in the following manner:
-\begin{enumerate}
-\item the first virtual machines identified in the \texttt{run} method are named as the first VM created (say, vm1 and vm2 \wrt{} the previous example);
-\item if the fields are overwritten, the vm names will obviously change;
-\item no changes are made on the released VM set (all the released VMs are put inside $R$);
-\item when a \texttt{join} occurs, the set R is checked: assuming that the thread released vm1 and overwrote vm2 with vm5 releasing it afterwards, we will have $R = \{vm1, vm5\}$ (as if $vm1 = \alpha, vm2 = \beta$ etc, and $R = \{\alpha, \epsilon\}$) while in the environment the thread will have value $f = (-, run(vm143, vm352, 13-x), \{vm1, vm5\})$, where vm143 and vm352 are some VMs created in the main thread and vm1, vm5 the machines released in the thread;
-\item since vm1 refers to the first vm of the thread, vm143 will be released in the environment;
-\item since vm5 refers to the 5th vm of the thread but the constructor only contains 2, it is counted as a local vm (it actually is) and its presence in $R$ means nothing \wrt{} the environment.
-\end{enumerate}
+Each method invoked on a thread may change its fields just like \emph{create} and \emph{release} change the machine states in the environment. It may not be necessary to type field changes for all classes, but it may be that other classes (main class included) save references of virtual machines in their fields.
 
+In this variation, the constructor is just a method which, when typed, has the collateral effect of assigning all the thread fields. For instance, given a generic memory $F = [\texttt{this}, VM:p_1, VM:p_2, \Int:p_3]$ (we can know the types of the parameters because of the previous assumptions), the two following lines in the constructor:\\
+\texttt{load\_1 \\ putfield x1}\\
+have the collateral effect of updating $F$ with $[\texttt{x1} \mapsto p_1]$. In the end, the constructor type will hold the mapping between parameters \emph{p} and fields \texttt{x}, and when the constructor is invoked with actual parameters the fields will be assigned to the actual parameters instead of the formal ones. The set of released machines R should then remain parametric \wrt{} the fields, in order to keep track of possible changes until \texttt{run} is invoked. When this happens, R is instantiated with the actual field values within $\Gamma$ and the behavioral type is updated. Notice that every thread instance should keep its own set of fields and R.
 
 \newpage
 \section{Typing rules}
