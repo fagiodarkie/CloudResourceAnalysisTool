@@ -1,5 +1,5 @@
 \newcommand{\filedate}{\today}
-\newcommand{\fileversion}{Version 0.1}
+\newcommand{\fileversion}{Version 0.8}
 
 %\documentclass{article}
 \documentclass{amsart}
@@ -248,7 +248,7 @@ The method itself is typed as $b, R$ where:
 \item $b$ is the behavioral type of the method, computed as if the method was a program. Since the method body itself starts from instruction 1 like the program, to tell apart the behavior function computing the method's behavioral type from the one computing the program's behavioral type the former one will be called $\bB{}^M$, having otherwise the same semanthics.
 \item $R$ is the set of released global virtual machines. The local virtual machines are not considered of interest, as their references are forever lost once the method returns.
 \end{itemize}
-Both of them are parametric \wrt{} the parameters of the method \texttt{run}.
+Both of them are parametric with respect to the parameters of the method \texttt{run}.
 
 \subsubsection{Open problems}
 To be able to release virtual machines, the thread must save their references somewhere before the method \texttt{run()} is called. This may be done either in its constructor or in a custom method. This behavior leads to 2 main problems:
